@@ -38,3 +38,4 @@ function fileCleaner() {
 }
 
 fileCleaner();
+console.log("hi");

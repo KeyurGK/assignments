@@ -5,6 +5,13 @@
  */
 
 function sleep(milliseconds) {
+  return new Promise(function (res, rej) {
+    setTimeout(function () {
+      res();
+    }, milliseconds);
+  });
 }
-
+sleep(1000).then(function () {
+  console.log("Sleep completed"); // This function will be executed after the sleep is completed
+});
 module.exports = sleep;
