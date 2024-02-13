@@ -39,11 +39,84 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
-  
-  const app = express();
-  
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+const express = require("express");
+const bodyParser = require("body-parser");
+
+const app = express();
+// This endpoint get all the todos
+let todos = [];
+app.use(bodyParser.json());
+app.use(express.json());
+// This endpoint get all the todos
+
+app.get("/todos", function (req, res) {
+  try {
+    res.status(200).json({ todos });
+  } catch (error) {
+    res.status(404).json({
+      msg: "There is an error",
+    });
+  }
+});
+//This endpoint is to get todos based on id
+app.get("/todos/:id", function (req, res) {
+  const isId = req.params.id;
+  let todosLength = todos.length;
+  let found = false;
+  for (let i = 0; i < todosLength; i++) {
+    if (todos[i].id == isId) {
+      res.status(200).json(todos[i]);
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    res.status(404).json({
+      msg: "Id Not Found",
+    });
+  }
+});
+
+// This endpoint creates a new todo
+
+app.post("/todos", function (req, res) {
+  const isTitle = req.body.title;
+  const isDescription = req.body.description;
+
+  try {
+    let todoObject = {
+      id: isTitle.length,
+      title: isTitle,
+      description: isDescription,
+    };
+    todos.push(todoObject);
+    res.status(201).json({
+      msg: "Todo Created !!!",
+    });
+  } catch (error) {
+    res.status(404).json({
+      msg: error.message,
+    });
+  }
+});
+//This endpoint deleted a todo by its id
+app.delete("/todos/:id", function (req, res) {
+  const isId = req.params.id;
+  let todosLength = todos.length;
+  let found = false;
+  for (let i = 0; i < todosLength; i++) {
+    if (todos[i].id == isId) {
+      todos.splice(i, 1);
+      res.status(200).json(todos);
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    res.status(404).json({
+      msg: "Id Not Found",
+    });
+  }
+});
+app.listen(3000);
+module.exports = app;
