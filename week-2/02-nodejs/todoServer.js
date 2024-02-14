@@ -82,12 +82,14 @@ app.get("/todos/:id", function (req, res) {
 app.post("/todos", function (req, res) {
   const isTitle = req.body.title;
   const isDescription = req.body.description;
+  const isCompleted = req.body.completed;
 
   try {
     let todoObject = {
       id: isTitle.length,
       title: isTitle,
       description: isDescription,
+      completed: isCompleted,
     };
     todos.push(todoObject);
     res.status(201).json({
@@ -115,6 +117,31 @@ app.delete("/todos/:id", function (req, res) {
   if (!found) {
     res.status(404).json({
       msg: "Id Not Found",
+    });
+  }
+});
+//This endpoint updates an exisitng todo
+app.put("/todos/:id", function (req, res) {
+  let todosLength = todos.length;
+
+  const isCompleted = req.body.completed;
+  const isId = req.params.id;
+  let found = false;
+
+  for (let i = 0; i < todosLength; i++) {
+    if (todos[i].id == isId) {
+      todos[i].completed = isCompleted;
+      res.status(200).json({
+        msg: "OK",
+      });
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    res.status(404).json({
+      msg: "Not Found",
     });
   }
 });
