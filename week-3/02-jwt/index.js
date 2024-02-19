@@ -1,6 +1,15 @@
-const jwt = require('jsonwebtoken');
-const jwtPassword = 'secret';
+const jwt = require("jsonwebtoken");
+const jwtPassword = "secret";
+const z = require("zod");
 
+function inputValidator(username, password) {
+  const emailSchema = z.string().email();
+  const passwordSchema = z.string().length(6);
+  return (
+    emailSchema.safeParse(username).success &&
+    passwordSchema.safeParse(password).success
+  );
+}
 
 /**
  * Generates a JWT for a given username and password.
@@ -14,7 +23,17 @@ const jwtPassword = 'secret';
  *                        the password does not meet the length requirement.
  */
 function signJwt(username, password) {
-    // Your code here
+  if (inputValidator(username, password)) {
+    var token = jwt.sign(
+      { username: username, password: password },
+      jwtPassword
+    );
+    return token;
+  } else {
+    return null;
+  }
+
+  // Your code here
 }
 
 /**
@@ -26,7 +45,17 @@ function signJwt(username, password) {
  *                    using the secret key.
  */
 function verifyJwt(token) {
-    // Your code here
+  try {
+    // Attempt to verify the token
+    const verifiedToken = jwt.verify(token, jwtPassword);
+    // If verification is successful, return true
+    return true;
+  } catch (error) {
+    // If an error occurs during verification, return false
+    return false;
+  }
+
+  // Your code here
 }
 
 /**
@@ -36,10 +65,25 @@ function verifyJwt(token) {
  * @returns {object|false} The decoded payload of the JWT if the token is a valid JWT format.
  *                         Returns false if the token is not a valid JWT format.
  */
-function decodeJwt(token) {
-    // Your code here
-}
 
+function isValidJWT(decodedToken) {
+  if (typeof decodedToken !== "object" || decodedToken === null) {
+    return false;
+  }
+
+  return true;
+}
+function decodeJwt(token) {
+  try {
+    const decodedToken = jwt.decode(token);
+    isValidJWT(decodedToken.payload);
+    return true;
+  } catch (error) {
+    return false;
+  }
+
+  // Your code here
+}
 
 module.exports = {
   signJwt,
