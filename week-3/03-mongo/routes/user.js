@@ -65,7 +65,7 @@ router.get("/purchasedCourses", userMiddleware, (req, res) => {
     username: username,
   })
     .then(function (user) {
-      Course.find({
+      return Course.find({
         _id: {
           $in: user.purchasedCourses,
         },
